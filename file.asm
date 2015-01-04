@@ -22,7 +22,7 @@ endm
         msg db 10,13,10,13,"failed to open$"
         msg2 db 10,13,10,13,"failed to write$"
         count dw 00h
-        
+
         NEWNAM DB 30 DUP(0)
         cret db 10,13,10,13,"FILE CREATED!$"
         openn db 10,13,10,13,"FILE OPENED!$"
@@ -49,11 +49,11 @@ endm
 
         main proc
                 mov ax,@data
-                mov ds,ax     ;initialise ds:dx as file pointer    
+                mov ds,ax     ;initialise ds:dx as file pointer
                 mov es,ax
-menu:                
+menu:
 
-                
+
                 call option
 
                 cmp choice,'1'
@@ -74,24 +74,24 @@ jmp menu
 
 
 
-        EXT:        
+        EXT:
                 mov ah,4Ch
                 int 21h
 
-        CREATE:        
+        CREATE:
                 print entr
 
-                lea di,filenam     ;array to store elements          
+                lea di,filenam     ;array to store elements
                 bk2:
-                
+
                 mov ah,01h         ;read char
                 int 21h
                 cmp al,0Dh
                         je ot2
-                
+
                 stosb           ;store in buffer
                 jmp bk2            ;read till 'enter'
-               
+
               ot2:
 
                 mov dx,offset filenam
@@ -103,62 +103,62 @@ jmp menu
                 MOV FLAG,1
                 jmp menu
 
-ERROR:       
+ERROR:
 
                 print err1
                 jmp menu
 
 
-        OPEN:         
+        OPEN:
                 CALL OPN
                 JMP MENU
 
-        WRIT:        
+        WRIT:
                 call inpt
                 call wr
                 jmp menu
-        
+
         RD:
                 call reed
-                jmp menu                
-                
+                jmp menu
+
         RENM:
                 CALL RENQ
                 JMP MENU
 
-        DEL: 
+        DEL:
                 mov ah,41h
-                
+
                 lea dx,filenam
                 int 21h
                 jc ERROR
                 PRINT DEE
                 JMP MENU
-                
+
 
 endp main
 
 OPN PROC NEAR
 
                 CMP FLAG,1
-                        JNE ER        
+                        JNE ER
 
                 mov ah,3Dh      ;open
                 mov al,2        ;access mode-read write
                 int 21h
-                jc fail         ;failed to open        
-                
+                jc fail         ;failed to open
+
                 PRINT OPENN
-                mov handle,ax   ;save handle (16bit) 
+                mov handle,ax   ;save handle (16bit)
                 MOV FLAG,2
                 jmp menu
-        
+
            ER:
                 PRINT NOCRET
-                
+
            fail:
                 print msg
-                
+
 
 RET
 ENDP
@@ -166,22 +166,22 @@ ENDP
 RENQ PROC NEAR
 
                 cmp flag,2
-                
+
                 jle end2
 
                 PRINT ENTR
-                
-                lea di,NEWNAM   ;array to store elements          
+
+                lea di,NEWNAM   ;array to store elements
                 bk1:
-                
+
                 mov ah,01h      ;read char
                 int 21h
                 cmp al,0Dh
                         je ot1
-                
+
                 stosb           ;store in buffer
                 jmp bk1         ;read till 'enter'
-               
+
               ot1:
 
                 mov dx,offset filenam
@@ -201,14 +201,14 @@ RENQ PROC NEAR
                         print err1
                 jmp exit1
 
-END2:                       
+END2:
 print nocret
 print err1
 
 exit1:
 
 
-RET 
+RET
 ENDP
 
 
@@ -223,7 +223,7 @@ reed proc near
                 mov bx,handle      ;file to close
                 mov ah,3Eh         ;close a file
                 int 21h
-                
+
                 mov ah,3Dh        ;reopen file in read mode
                 mov al,00h        ;read mode
                 mov dx,offset filenam
@@ -232,16 +232,16 @@ reed proc near
                 mov ah,3Fh        ;read a file
                 mov bx,handle     ;handle
                 mov cx,count      ;no of bytes to be read
-                mov dx,offset buffer  
+                mov dx,offset buffer
                 int 21h           ;buffer to store bytes read
-               
+
                 print read
-                
-                lea si,buffer     ;print nos read from file                       
+
+                lea si,buffer     ;print nos read from file
                 mov cx,count
                 mov ah,02h
                 AA:
-                
+
                 lodsb
                 mov dl,al
                 int 21h
@@ -251,7 +251,7 @@ reed proc near
                 ER2:
                         print nowrit
 
-end3:                        
+end3:
 
 ret
 endp
@@ -259,8 +259,8 @@ endp
 
 option proc near
 
-        push ax        
-        
+        push ax
+
                 print msgQ
                 print msga
                 print msgb
@@ -281,30 +281,30 @@ endp
 
 inpt proc near
 
-        push ax        
+        push ax
         push di
         push cx
 
                 CMP FLAG,2
                         jne errr1
-                
+
                 print input
 
-lea di,buffer     ;array to store elements          
+lea di,buffer     ;array to store elements
                 mov cx,00h
 
                 bk:
-                
+
                 mov ah,01h            ;read char
                 int 21h
                 cmp al,0Dh
                         je ot
-                
+
                 stosb           ;store in buffer
                 inc cx
-                
+
                 jmp bk          ;read till 'enter'
-               
+
               ot:
 
                 mov count,cx
@@ -330,7 +330,7 @@ wr proc near
                 mov cx,count         ;no of bytes to write
                 mov dx,offset buffer ;ds:dx has buffer address
                 int 21h
-                jc FAIL_w            ;failes to write        
+                jc FAIL_w            ;failes to write
                 print write
                 mov flag,3
                 jmp endd

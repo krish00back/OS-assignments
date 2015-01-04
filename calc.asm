@@ -24,7 +24,7 @@ DATA SEGMENT
         MSG6 DB 10,13,"5.EXIT:$"
         MSG7 DB 10,13,"ENTER YR CHOICE:$"
         MSG8 DB 10,13,"RESULT IS : $"
-        MSG9 DB 10,13,"DO U WANT TO CONTINUE:$" 
+        MSG9 DB 10,13,"DO U WANT TO CONTINUE:$"
         MSG10 DB 10,13,"ERROR: DIVIDE BY ZERO$"
         TEN DD 10.0
         IP DW ?
@@ -36,7 +36,7 @@ DATA SEGMENT
         DIG DD 6 DUP(0.0)
             DD 6 DUP(0.0)
         PI DD 3.1416
-        
+
 DATA ENDS
 
 CODE SEGMENT
@@ -44,7 +44,7 @@ CODE SEGMENT
 START:
         MOV AX,DATA
         MOV DS,AX
-       
+
         FINIT
         DISP MSG0
         CALL ACCEPT
@@ -62,7 +62,7 @@ S1:
         MOV WORD PTR DIVP,AX
         MOV AX,WORD PTR TEMP+2
         MOV WORD PTR DIVP+2,AX
-        
+
         MOV AX,WORD PTR TEMP1
         MOV WORD PTR DIVI,AX
         MOV AX,WORD PTR TEMP1+2
@@ -77,7 +77,7 @@ S1:
         MOV WORD PTR NUM2,AX
         MOV AX,WORD PTR NUM+2
         MOV WORD PTR NUM2+2,AX
-        
+
         MOV WORD PTR NUM,0
         MOV WORD PTR NUM+2,0
 
@@ -94,8 +94,8 @@ S1:
         DISP MSG6
 
         DISP MSG7
-        
-        
+
+
         MOV AH,01H
         INT 21H
         CMP AL,31H
@@ -133,10 +133,10 @@ M:      FINIT
         FWAIT
         CALL CHECK
         JMP C1
-S2:     JMP S1 
+S2:     JMP S1
  EXIT1:JMP EXIT
 D:      FINIT
-        MOV AX,WORD PTR NUM2                                                                                                                                                                                                      
+        MOV AX,WORD PTR NUM2
         CMP AX,0000H
         JE NEXT
         JMP NOERROR
@@ -148,9 +148,9 @@ NOERROR:FLD NUM1
         FSTP RESULT
         CALL CHECK
         JMP C1
-ERROR:  DISP MSG10        
+ERROR:  DISP MSG10
         JMP CHOICE
-        
+
 C1:     DISP MSG8
         CMP FLAG,02H
         JE  MINUS
@@ -167,12 +167,12 @@ MINUS:  MOV DX,'-'
         MOV AH,02H
         INT 21H
         CALL SHOW
-        
+
 CHOICE:DISP MSG9
        MOV AH,01H
        INT 21H
        CMP AL,'Y'
-       JE S2        
+       JE S2
 EXIT:   MOV AH,4CH
         INT 21H
 
@@ -187,7 +187,7 @@ LOOP1:
     SET:
            MOV FLAG,1
            JMP LOOP1
-    CONT:           
+    CONT:
            FLD NUM
            XOR AH,AH
            CMP AL,0DH
@@ -220,7 +220,7 @@ LOOP2:
            JMP LOOP2
 END1:
            FST NUM
-          
+
            CMP FLAG,1
            JE SET1
            JMP NOTSET
@@ -237,7 +237,7 @@ DIGITS PROC NEAR
         MOV CX,6
 UP:
         FINIT
-        
+
         FSTCW CW
         OR CW,0C00H
         FLDCW CW
@@ -301,9 +301,9 @@ CHECK PROC NEAR
 ENDP
 CODE ENDS
 END START
-        
 
 
-    
+
+
 
 

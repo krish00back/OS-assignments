@@ -25,9 +25,9 @@ POPALL MACRO
        POP DI
        POP SI
        POP DX
-       POP CX  
-       POP BX  
-       POP AX 
+       POP CX
+       POP BX
+       POP AX
  ENDM
 
 .stack
@@ -49,7 +49,7 @@ POPALL MACRO
 .code
 
 main proc
-        
+
                 mov ax,@data
                 mov ds,ax
                 mov es,ax
@@ -64,25 +64,25 @@ main proc
                 jnz bk
 
                 ot:
-                
+
                 mov al,0
                 mov cx,1
                 mov dx,13h
-                
-                lea bx,root_dir_buf 
+
+                lea bx,root_dir_buf
                 int 25h
                 lea di,root_dir_buf
                 mov count,16
                 up:
-                
+
                 lea si,name_buf
                 mov dx,di
                 mov cx,11
-                repe cmpsb 
-                
+                repe cmpsb
+
                 cmp cx,0
                         je found
-                
+
                 ;if not found
                 mov di,dx
                 add di,32
@@ -92,23 +92,23 @@ main proc
                 cmp count,0
                         jne found
 
-             
+
                         print msg_notfound
                         mov ah,4Ch
                         int 21h
 
 
-                
+
                 found:
                         print msg_found
                         MOV DI,DX
                         ADD DI,1AH
                         MOV bX,[DI]
-                        
+
                         mov srt_clus ,bX
 
-                        mov bX,srt_clus                
-                        
+                        mov bX,srt_clus
+
                         ;****read and print sector
 
                         add BX,31
@@ -117,12 +117,12 @@ main proc
                         mov cx,1
                         lea bx,file_buffer
                         int 25h
-                                     
+
                         lea si,file_buffer
                         mov cx,512
-               
+
                         neww:
-                        
+
                          lodsb
                          mov dl,al
                          mov ah,02h
@@ -130,18 +130,18 @@ main proc
                          dec cx
                          jnz neww
 
-                        
+
                         mov al,0
                         mov cx,9
                         mov dx,1
                         lea bx,fat_buffer
                         int 25h
-                        
+
                         mov bx,srt_clus
                         mov clus_next,bx
 
-                      bk4:  
-                        
+                      bk4:
+
                         MOV AX,clus_next
                         PRINT NEWLINE
 
@@ -151,15 +151,15 @@ main proc
                         MOV AH,02H
                         INT 21H
                         POP AX
-                        
+
                         PRINT NEWLINE
 
                         MOV CL,3
                         MUL CL
-                        
-                        
+
+
                         SHR AX,1
-                        
+
                         MOV BX,AX
 
                         MOV AX,clus_next
@@ -167,9 +167,9 @@ main proc
                         div cl
                         CMP Ah,0
                                 JE EVEN1
-                        
+
                         ;ELSE ODD
-                             
+
                              MOV AX,bX
                              LEA DI,FAT_BUFFER
 
@@ -178,14 +178,14 @@ main proc
                              MOV BX ,[DI]
                              MOV CLUS_NEXT,BX
                              POP BX
-                             
+
                              SHR CLUS_NEXT,4
                              MOV DX,CLUS_NEXT
                              cmp dx,0FFFh
                                 je endd
 
                              ;MOV BX,DX
-                             
+
                              ;****read and print sector
 
                         add dX,31
@@ -194,12 +194,12 @@ main proc
                         mov cx,1
                         lea bx,file_buffer
                         int 25h
-                                     
+
                         lea si,file_buffer
                         mov cx,512
-               
+
                         neww1:
-                        
+
                          lodsb
                          mov dl,al
                          mov ah,02h
@@ -207,28 +207,28 @@ main proc
                          dec cx
                          jnz neww1
 
-                             
+
                              JMP bk4
 
 
                         EVEN1:
-                             
+
                              MOV AX,BX
                              LEA DI,FAT_BUFFER
-                             
+
                              PUSH BX
-                             
+
                              ADD DI,AX
                              MOV BX,[DI]
                              MOV CLUS_NEXT ,BX
                              POP BX
 
-                             
+
                              AND CLUS_NEXT,0FFFH
-                             
+
                              MOV DX,CLUS_NEXT
                              cmp dx,0FFFh
-                                
+
                                 je endd
                             ;MOV BX,DX
                             ;******read and print sector
@@ -239,12 +239,12 @@ main proc
                         mov cx,1
                         lea bx,file_buffer
                         int 25h
-                                     
+
                         lea si,file_buffer
                         mov cx,512
-               
+
                         neww2:
-                        
+
                          lodsb
                          mov dl,al
                          mov ah,02h
